@@ -1,0 +1,58 @@
+﻿@page "/Projects"
+@rendermode InteractiveServer
+@using OpenFlowWebServer.Data.Repositories
+@using OpenFlowWebServer.Data.Domain
+@inject IProjectRepository ProjectRepository
+@inject NavigationManager NavigationManager
+<h3>Projects</h3>
+
+<NavLink class="btn btn-primary mb-3" href="/projects/add">Add New Project</NavLink>
+
+@if (projects is null)
+{
+    <p><em>Loading...</em></p>
+}
+else if (!projects.Any())
+{
+    <p>No projects available.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Project Name</th>
+            <th>Description</th>
+            <th>Method</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var project in projects)
+        {
+            <tr @onclick="() =>NavigateToProject(project.Id) ">
+                <td>@project.ProjectName</td>
+                <td>@project.ProjectDescription</td>
+                <td>@project.ChooseMethod</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Project> projects = new List<Project>();
+    protected override async Task OnInitializedAsync()
+    {
+        projects = await ProjectRepository.GetAllAsync();
+        base.OnInitializedAsync();
+    }
+    /*private void NavigateToAddProject()
+    {
+        NavigationManager.NavigateTo("/projects/add");
+    }*/
+
+    private void NavigateToProject(Guid id)
+    {
+        NavigationManager.NavigateTo($"/project/{id}");
+    }
+}

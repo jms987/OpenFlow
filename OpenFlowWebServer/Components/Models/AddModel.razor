@@ -1,0 +1,124 @@
+﻿@page "/models/add/{projectId}"
+@using OpenFlowWebServer.Data.Repositories
+@using OpenFlowWebServer.Data.Domain
+@rendermode InteractiveServer
+@inject IModelRepository ModelRepository
+@inject IProjectRepository ProjectRepository
+<EditForm Model="@newModel" OnValidSubmit="HandleValidSubmit">  
+ <DataAnnotationsValidator />  
+ <ValidationSummary />  
+
+ <div class="form-group">  
+     <label for="modelName">Model Name:</label>  
+     <InputText id="modelName" class="form-control" @bind-Value="newModel.ModelName" />  
+ </div>  
+
+ <div class="form-group">  
+     <label for="modelDescription">Model Description:</label>  
+     <InputTextArea id="modelDescription" class="form-control" @bind-Value="newModel.ModelDescription" />  
+ </div>  
+
+ <div class="form-group">  
+     <label for="modelType">Model Type:</label>  
+     <InputText id="modelType" class="form-control" @bind-Value="newModel.ModelType" />  
+ </div>  
+
+ <div class="form-group">  
+    <label for="hyperparameterName">Hyperparameter Name:</label>  
+    <InputText id="hyperparameterName" class="form-control" @bind-Value="newHyperparameter.Name" placeholder="Name" />  
+
+    <label for="bottomRange" class="mt-2">Bottom Range:</label>  
+    <InputNumber id="bottomRange" class="form-control" @bind-Value="newHyperparameter.bottomRange" placeholder="Bottom Range" />  
+
+    <label for="upperRange" class="mt-2">Upper Range:</label>  
+    <InputNumber id="upperRange" class="form-control" @bind-Value="newHyperparameter.upperRange" placeholder="Upper Range" />  
+
+    <label for="step" class="mt-2">Step:</label>  
+    <InputNumber id="step" class="form-control" @bind-Value="newHyperparameter.step" placeholder="Step" />  
+
+    <button type="button" class="btn btn-secondary mt-2" @onclick="AddHyperparameter">Add Hyperparameter</button>  
+
+    <ul class="mt-3">  
+        @foreach (var hyperparameter in newModel.Hyperparameters)  
+        {  
+            <li>@hyperparameter.Name: Range (@hyperparameter.bottomRange - @hyperparameter.upperRange), Step: @hyperparameter.step  
+                <button type="button" class="btn btn-danger btn-sm ms-2" @onclick="() => RemoveHyperparameter(hyperparameter)">Delete</button>  
+            </li>  
+        }  
+    </ul>  
+ </div>  
+
+ <button type="submit" class="btn btn-primary">Add Model</button>  
+</EditForm>  
+
+@code {
+    [Parameter] 
+    public string projectId { get; set; }
+private InputModel newModel = new InputModel();  
+private Hyperparameter newHyperparameter = new Hyperparameter();  
+
+private async Task HandleValidSubmit()
+{
+    try
+    {
+        var project = await ProjectRepository.GetByIdAsync(Guid.Parse(projectId));
+    var dbModel = new Model()
+    {
+    /*ProjectId = Guid.Parse(projectId),*/
+        ModelDescription = newModel.ModelDescription,
+        ModelType = newModel.ModelType,
+        ModelName = newModel.ModelName,
+        Hyperparameters = newModel.Hyperparameters,
+    };   
+    project.Models.Add(dbModel);
+    await ModelRepository.AddAsync(dbModel);
+    await ProjectRepository.UpdateAsync(project);
+
+
+        await ProjectRepository.SaveChangesAsync();
+    }
+    catch (Exception ex)
+    {
+        Console.Error.WriteLine(ex);
+        throw;
+    }
+    newModel = new InputModel();
+}  
+
+private void AddHyperparameter()  
+{  
+    if (!string.IsNullOrWhiteSpace(newHyperparameter.Name) && newHyperparameter.bottomRange < newHyperparameter.upperRange)  
+    {  
+            newModel.Hyperparameters.Add(new Hyperparameter
+        {  
+            Name = newHyperparameter.Name,  
+            bottomRange = newHyperparameter.bottomRange,  
+            upperRange = newHyperparameter.upperRange,  
+            step = newHyperparameter.step  
+        });  
+        newHyperparameter = new Hyperparameter();  
+    }  
+}  
+
+private void RemoveHyperparameter(Hyperparameter hyperparameter)  
+{  
+        newModel.Hyperparameters.Remove(hyperparameter);
+}  
+
+public class InputModel  
+{  
+    
+    public string ModelName { get; set; }  
+    public string? ModelDescription { get; set; }  
+    public string? ModelType { get; set; }  
+    public List<Hyperparameter> Hyperparameters { get; set; } = new List<Hyperparameter>();  
+}  
+
+/*public class InputHyperparameter  
+{  
+    public string Name { get; set; }  
+    public decimal bottomRange { get; set; }  
+    public decimal upperRange { get; set; }  
+    public decimal step { get; set; }  
+}  */
+}

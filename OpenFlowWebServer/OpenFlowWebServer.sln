@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35931.197
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenFlowWebServer", "OpenFlowWebServer.csproj", "{99E188A7-0304-4855-9D1C-923C6AE4FDCF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{99E188A7-0304-4855-9D1C-923C6AE4FDCF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99E188A7-0304-4855-9D1C-923C6AE4FDCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99E188A7-0304-4855-9D1C-923C6AE4FDCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99E188A7-0304-4855-9D1C-923C6AE4FDCF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6065C071-A55B-407A-AA74-DC84FDD21DB2}
+	EndGlobalSection
+EndGlobal

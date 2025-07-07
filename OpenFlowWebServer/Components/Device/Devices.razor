@@ -1,0 +1,35 @@
+﻿@page "/devices"
+@using OpenFlowWebServer.Data.Repositories
+@using OpenFlowWebServer.Data.Domain
+<h3>Devices</h3>
+@inject IDeviceRepository DeviceRepository
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Id</th>
+        <th>Created At</th>
+        <th>Updated At</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var device in devices)
+    {
+        <tr>
+            <td>@device.Id</td>
+            <td>@device.CreatedAt</td>
+            <td>@device.UpdatedAt</td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+@code {
+    private List<Device> devices = new List<Device>();
+    protected override async Task OnInitializedAsync()
+    {
+      devices =await DeviceRepository.GetAllAsync();
+      base.OnInitializedAsync();
+    }
+
+}

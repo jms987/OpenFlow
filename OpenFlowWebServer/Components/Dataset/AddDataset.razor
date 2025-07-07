@@ -1,0 +1,178 @@
+﻿@page "/dataset/add/{projectId}"
+@rendermode InteractiveServer
+@using OpenFlowWebServer.Data.Domain
+@using OpenFlowWebServer.Data.Repositories
+@using OpenFlowWebServer.Repository
+@using System.ComponentModel.DataAnnotations
+@using Humanizer
+@inject IProjectRepository ProjectRepository
+@inject IDatasetRepository DatasetRepository
+@inject IFileRepository FileRepository
+@inject IBlobRepository<byte[]> BlobRepository
+@inject IBrowserFileService BrowserFileService
+@inject NavigationManager NavigationManager
+<h3>AddDataset</h3>
+
+<EditForm Model="@NewDataset" OnValidSubmit="HandleValidSubmit">  
+    <DataAnnotationsValidator />  
+    <ValidationSummary />  
+
+    <div class="form-group">  
+        <label for="name">Name</label>  
+        <InputText id="name" class="form-control" @bind-Value="NewDataset.Name" />  
+    </div>  
+
+    <div class="form-group">  
+        <label for="description">Description</label>  
+        <InputTextArea id="description" class="form-control" @bind-Value="NewDataset.Description" />  
+    </div>  
+
+    <div class="form-group">  
+        <label for="configFile">Config File</label>  
+        <InputFile id="configFile" class="form-control" OnChange="e=>HandleFileChange(e,true)" />  
+    </div>  
+
+    <div class="form-group">  
+        <label for="datasetFile">Dataset File</label>  
+        <InputFile id="datasetFile" class="form-control" OnChange="e=>HandleFileChange(e,false)" />
+    </div>  
+
+    <button type="submit" class="btn btn-primary">Add Dataset</button>  
+
+    <button @onclick="save">Save</button>
+
+</EditForm>  
+
+@code {
+
+    [Parameter]
+    public string projectId { get; set; }
+
+    private InputFileChangeEventArgs? ConfigFile;
+    private InputFileChangeEventArgs? DatasetFile;
+    public InputDataset NewDataset = new InputDataset();
+    /*private File DatasetInputFile;
+    private File ConfigInputFile;*/
+
+    private void save()
+    {
+        /*var t =HandleValidSubmit();
+        t.Wait();*/
+                NavigationManager.NavigateTo($"/project/{projectId}");
+
+    }
+
+
+    private async Task HandleValidSubmit()
+    {
+        var a = 0;
+        var config = await BrowserFileService.HandleFileChange(ConfigFile, "config");
+        var datasetFile = await BrowserFileService.HandleFileChange(DatasetFile, "dataset");
+
+        var dataset = new Dataset();
+        dataset.ConfigFileId = config.Id;
+        dataset.DatasetFileId = datasetFile.Id;
+        dataset.Name = NewDataset.Name;
+        dataset.Description = NewDataset.Description;
+        dataset.ProjectId = Guid.Parse(projectId);
+        dataset.CreatedAt = DateTime.UtcNow;
+        await DatasetRepository.AddAsync(dataset);
+        await FileRepository.AddAsync(config);
+        await FileRepository.AddAsync(datasetFile);
+        await DatasetRepository.SaveChangesAsync();
+        NavigationManager.NavigateTo($"/project/{projectId}");
+
+    }
+
+    /*private async Task HandleValidSubmit()
+         * 
+        {
+
+
+            try
+            {
+                var datasetTask = await BlobRepository.AddBlobAsync(DatasetInputFile.Base64data, DatasetInputFile.Container);
+    var configTask = await  BlobRepository.AddBlobAsync(ConfigInputFile.Base64data, ConfigInputFile.Container);
+    /*Task.WaitAll([datasetTask, configTask]);#2##1#
+    /*DatasetInputFile.Url = datasetTask.Result.AbsoluteUri;#1#
+    DatasetInputFile.Url = datasetTask.AbsoluteUri;
+                /*ConfigInputFile.Url = configTask.Result.AbsoluteUri;#1#
+                ConfigInputFile.Url = configTask.AbsoluteUri;
+                await FileRepository.AddAsync(DatasetInputFile);
+    await FileRepository.AddAsync(ConfigInputFile);
+    await FileRepository.SaveChangesAsync();
+    }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: ");
+                Console.WriteLine(ex.Message);
+            }
+            try
+            {
+                var dataset = new Dataset();
+                dataset.ConfigFileId = ConfigInputFile.Id;
+                dataset.DatasetFileId = DatasetInputFile.Id;
+                dataset.Name = NewDataset.Name;
+                dataset.Description = NewDataset.Description;
+                dataset.ProjectId = Guid.Parse(projectId);
+                dataset.CreatedAt = DateTime.UtcNow;
+                await DatasetRepository.AddAsync(dataset);
+                await DatasetRepository.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: ");
+                Console.WriteLine(ex.Message);
+            }
+            NavigationManager.NavigateTo($"/project/{projectId}");
+        }*/
+
+    private async void HandleFileChange(InputFileChangeEventArgs e, bool container)
+    {
+        /*string containerName = container ? "Config" : "Dataset";*/
+            if (container)
+            {
+    ConfigFile = e;
+            }
+            else
+            {
+    DatasetFile = e;
+            }
+        /*BrowserFileService.HandleFileChange(e,containerName);
+            NavigationManager.NavigateTo($"/project/{projectId}");*/
+    }
+
+
+    /*private async void HandleFileChange(InputFileChangeEventArgs e,bool container)
+    {
+        var InputFile = new File();
+        ConfigFile = e.File;  
+        InputFile.Id = Guid.NewGuid();
+        InputFile.Container = "Config";  
+        InputFile.Name = e.File.Name;
+        using var stream = ConfigFile.OpenReadStream();  
+        using var memoryStream = new MemoryStream();  
+        await stream.CopyToAsync(memoryStream);  
+        InputFile.Base64data = Convert.ToBase64String(memoryStream.ToArray());
+        InputFile.Extension = e.File.Name.Split('.').Last();
+        if (container)
+        {
+            InputFile.Container = "Config";
+            ConfigInputFile = InputFile;
+        }
+        else
+        {
+            InputFile.Container = "Dataset";
+            DatasetInputFile = InputFile;
+        }
+       }*/
+
+    public class InputDataset
+    {
+        [Required]
+        public string Name { get; set; }
+        public string Description { get; set; }
+        /*public string? ConfigFile { get; set; }
+        public string? DatasetFile { get; set; }*/
+    }
+}

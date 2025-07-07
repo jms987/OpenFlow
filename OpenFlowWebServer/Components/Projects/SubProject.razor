@@ -1,0 +1,67 @@
+﻿@page "/Project/{id}"  
+@rendermode InteractiveServer  
+@using OpenFlowWebServer.Data.Repositories  
+@using OpenFlowWebServer.Data.Domain  
+@inject IProjectRepository ProjectRepository  
+@inject NavigationManager NavigationManager  
+<h3>Project</h3>  
+<NavLink class="btn btn-primary mb-3" href="/projects/add">Add New Project</NavLink>  
+<NavLink class="btn btn-primary mb-3" @onclick="NewModelPage">Add New Model</NavLink>  
+<NavLink class="btn btn-primary mb-3" @onclick="NewDatasetPage">Add New Dataset</NavLink>
+
+<h4>@project.Id</h4>  
+<h5>@project.ProjectName</h5>  
+<p>@project.ProjectDescription</p>  
+<p>@project.ChooseMethod</p>  
+
+<h4>Models in this Project</h4>  
+@if (project.Models != null && project.Models.Any())  
+{  
+   <ul>  
+       @foreach (var model in project.Models)  
+       {  
+           <li>@model.ModelName - @model.ModelDescription</li>  
+       }  
+   </ul>  
+}  
+else  
+{  
+   <p>No models available for this project.</p>  
+}  
+<h4>Datasets in this Project</h4>
+@if (project.Datasets != null && project.Datasets.Any())
+{  
+    <ul>
+        @foreach (var dataset in project.Datasets)
+        {  
+            <li>@dataset.Name - @dataset.Description</li>  
+        }  
+    </ul>  
+}  
+else  
+{  
+    <p>No models available for this project.</p>  
+}  
+
+
+@code {  
+   [Parameter]  
+   public string id { get; set; }  
+   private Project project;  
+
+   protected override async Task OnInitializedAsync()  
+   {  
+       project = await ProjectRepository.GetByIdAsync(Guid.Parse(id));  
+       base.OnInitializedAsync();  
+   }  
+
+   private void NewModelPage()  
+   {  
+       NavigationManager.NavigateTo($"/models/add/{id}");  
+   }
+
+    private void NewDatasetPage()  
+    {  
+        NavigationManager.NavigateTo($"/dataset/add/{id}");  
+    }  
+}

@@ -1,0 +1,24 @@
+﻿@page "/Models/{id}"
+@using OpenFlowWebServer.Data.Domain
+@using OpenFlowWebServer.Data.Repositories
+
+@inject IModelRepository ModelRepository
+
+<h3>SubModel</h3>
+
+
+
+
+
+@code {
+    [Parameter]
+    public string Id { get; set; }
+    private Model model;
+
+    protected override async Task OnInitializedAsync()
+    {
+        model = await ModelRepository.GetByIdAsync(Guid.Parse(Id));
+         base.OnInitializedAsync();
+    }
+
+}

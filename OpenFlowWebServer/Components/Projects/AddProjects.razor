@@ -1,0 +1,76 @@
+﻿@page "/projects/add"  
+@rendermode InteractiveServer 
+@using OpenFlowWebServer.Data.Repositories  
+@using OpenFlowWebServer.Data.Domain 
+@using System.ComponentModel.DataAnnotations  
+@inject IProjectRepository ProjectRepository  
+@inject NavigationManager NavigationManager  
+<h3>Add New Project</h3>  
+
+<button class="btn btn-primary" @onclick="AddProject">Add Project</button>  
+
+<EditForm Model="newProject" method="post" asp-route-returnUrl="@ReturnUrl" OnValidSubmit="AddProject" FormName="register">
+    <DataAnnotationsValidator />
+    <h2>Create a new Project.</h2>
+    <hr />
+    <ValidationSummary class="text-danger" role="alert" />
+    <div class="form-floating mb-3">
+        <InputText @bind-Value="newProject.ProjectName" class="form-control" aria-required="true" />
+        <label for="ProjectName">Project Name</label>
+        <ValidationMessage For="() => newProject.ProjectName" class="text-danger" />
+    </div>
+    <div class="form-floating mb-3">
+        <InputText type="text" @bind-Value="newProject.ProjectDescription" class="form-control"  aria-required="true"  />
+        <label for="password">ProjectDescription</label>
+        <ValidationMessage For="() => newProject.ProjectDescription" class="text-danger" />
+    </div>
+    <div class="form-floating mb-3">
+        <InputText type="password" @bind-Value="newProject.ChooseMethod" class="form-control"  aria-required="true" />
+        <label for="confirm-password">Confirm Password</label>
+        <ValidationMessage For="() => newProject.ChooseMethod" class="text-danger" />
+    </div>
+    <button type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
+</EditForm>
+
+
+@code {  
+    [SupplyParameterFromForm]
+    private LocalProject newProject { get; set; }
+   /*private Dictionary<string, string> validationErrors = new();  */
+    [SupplyParameterFromQuery]
+    private string? ReturnUrl { get; set; }
+   protected override void OnInitialized()  
+   {  
+       newProject = new LocalProject();  
+       base.OnInitialized();  
+   }  
+
+   private async Task AddProject()  
+   {  
+
+       /*var context = new ValidationContext(newProject);  
+       var results = new List<ValidationResult>();*/
+
+       var project = new Project  
+       {  
+           Id = Guid.NewGuid(),  
+           ProjectName = newProject.ProjectName,  
+           ProjectDescription = newProject.ProjectDescription,  
+           ChooseMethod = newProject.ChooseMethod  
+       };  
+
+       await ProjectRepository.AddAsync(project);  
+       await ProjectRepository.SaveChangesAsync();  
+       NavigationManager.NavigateTo("/Projects");  
+   }  
+
+    private sealed class LocalProject  
+   {  
+       [Required]  
+        public string ProjectName { get; set; } = "";
+       [Required]  
+        public string ProjectDescription { get; set; } = "";
+       [Required]  
+        public string ChooseMethod { get; set; } = "";
+   }  
+}
