@@ -1,4 +1,4 @@
-﻿namespace OpenFlowWebServer.Data.Domain
+﻿namespace OpenFlowWebServer.Domain.Entities
 {
     public class Model
     {

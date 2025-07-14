@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using OpenFlowWebServer.Components.Account.Pages;
 using OpenFlowWebServer.Components.Account.Pages.Manage;
-using OpenFlowWebServer.Data;
+using OpenFlowWebServer.Domain;
 
 namespace Microsoft.AspNetCore.Routing
 {

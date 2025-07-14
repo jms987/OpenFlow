@@ -1,14 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
-using MongoDB.EntityFrameworkCore;
-using MongoDB.EntityFrameworkCore.Extensions;
-using Microsoft.EntityFrameworkCore;
-using MongoDB.Driver;
-using OpenFlowWebServer.Data.Domain;
-using File = OpenFlowWebServer.Data.Domain.File;
+﻿using Microsoft.EntityFrameworkCore;
+using OpenFlowWebServer.Domain.Entities;
+using File = OpenFlowWebServer.Domain.Entities.File;
 
-namespace OpenFlowWebServer.Data
+namespace OpenFlowWebServer.Domain
 {
 
     public class ApplicationDbContext :DbContext
@@ -30,16 +24,7 @@ namespace OpenFlowWebServer.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            /*modelBuilder.Entity<Device>()
-                .HasMany(d => d.Logs)
-                .WithOne(l => l.Device)
-                ;*/
-
-                /*.WithOne(p=>p.Mro)*/
-                /*modelBuilder.Entity<Project>()
-                    .HasMany(p => p.Models)
-                    ;*/
-                modelBuilder.Entity<Project>(proj =>
+            modelBuilder.Entity<Project>(proj =>
                 {
                     proj.OwnsMany(p => p.Models, mdl =>
                     {
@@ -55,28 +40,10 @@ namespace OpenFlowWebServer.Data
                     .WithMany(m => m.Hyperparameters) // Adjust if it's a one-to-one relationship
                     .HasForeignKey(h => h.ModelId);
 
-            /*
-            modelBuilder.Model.HasOne(d => d.User)
-                .WithMany(u => u.Devices)
-                .HasForeignKey(d => d.UserId);
-                */
-
-
-
             base.OnModelCreating(modelBuilder);
 
-            /*modelBuilder.Entity<ApplicationUser>();*/
         }
 
-        /*protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-
-            optionsBuilder.UseMongoDB("mongodb://localhost:8002", "OpenFlowWebServer");
-
-            base.OnConfiguring(optionsBuilder);
-        }*/
-
-        
     }
 
 }

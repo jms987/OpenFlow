@@ -1,8 +1,8 @@
 ﻿@page "/projects/add"  
-@rendermode InteractiveServer 
-@using OpenFlowWebServer.Data.Repositories  
-@using OpenFlowWebServer.Data.Domain 
-@using System.ComponentModel.DataAnnotations  
+@rendermode InteractiveServer
+@using System.ComponentModel.DataAnnotations
+@using OpenFlowWebServer.Domain.Entities
+@using OpenFlowWebServer.Repository
 @inject IProjectRepository ProjectRepository  
 @inject NavigationManager NavigationManager  
 <h3>Add New Project</h3>  

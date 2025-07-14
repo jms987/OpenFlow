@@ -1,7 +1,9 @@
-﻿using Azure.Storage.Blobs;
+﻿/*
+using Azure.Storage.Blobs;
 using OpenFlowWebServer.Repository;
 using System;
 using System.Runtime.CompilerServices;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace OpenFlowWebServer.Repository
@@ -9,7 +11,7 @@ namespace OpenFlowWebServer.Repository
     public interface IBlobRepository<T>
     {
         /*public Task<Uri> AddBlobAsync(string blobContent, string containerName);
-        public Task<Uri> AddBlobAsync(byte[] blobContent, string containerName);*/
+        public Task<Uri> AddBlobAsync(byte[] blobContent, string containerName);#1#
         public Task<BlobRepository.Blob> AddBlobAsync(T blobContent, string containerName);
         public Task DeleteBlobAsync(string blobId, string containerName);
     }
@@ -33,7 +35,7 @@ namespace OpenFlowWebServer.Repository
             ConnectionString = connectionString;
             BlobServiceClient = new BlobServiceClient(connectionString);
         }
-        */
+        #1#
 
         public BlobRepository(BlobServiceClient blobServiceClient, ILogger<BlobRepository> logger)
         {
@@ -113,7 +115,7 @@ namespace OpenFlowWebServer.Repository
             public Guid BlobId { get; set; }
             public string BlobName { get; set; }
             public string BlobUrl { get; set; }
-            /*public string ContainerName { get; set; }*/
+            /*public string ContainerName { get; set; }#1#
         }
     }
 }
@@ -158,4 +160,5 @@ namespace OpenFlowWebServer.Repository
         // ...
         return new Uri("https://example.com");
     }
-}*/
+}#1#
+*/

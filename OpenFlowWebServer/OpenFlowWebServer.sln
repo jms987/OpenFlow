@@ -5,6 +5,18 @@ VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenFlowWebServer", "OpenFlowWebServer.csproj", "{99E188A7-0304-4855-9D1C-923C6AE4FDCF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenFlowWebServer.Services", "..\OpenFlowWebServer.Services\OpenFlowWebServer.Services.csproj", "{123BED0F-305A-4E58-B02C-452AB555A593}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenFlowWebServer.Repository", "..\OpenFlowWebServer.Repository\OpenFlowWebServer.Repository.csproj", "{72C035D5-A87E-4247-98DE-FC834B901D76}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenFlowWebServer.Domain", "..\OpenFlowWebServer.Domain\OpenFlowWebServer.Domain.csproj", "{693BC67C-2119-4AC1-AEF1-603357450AAD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenFlowWebServer.Repository.Tests.Integration", "..\OpenFlowWebServer.Repository.Tests.Integration\OpenFlowWebServer.Repository.Tests.Integration.csproj", "{2540A975-60CE-495B-8953-59E430954FDA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenFlowWebServer.Domain.Tests.Unit", "..\OpenFlowWebServer.Domain.Tests.Unit\OpenFlowWebServer.Domain.Tests.Unit.csproj", "{25A3A654-0987-2E76-FCD3-A2A196DEF001}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenFlowWebServer.Tests.Integration", "..\OpenFlowWebServer.Tests.Integration\OpenFlowWebServer.Tests.Integration.csproj", "{3CC29B44-2D31-D644-BBED-308F5AA987D1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +27,30 @@ Global
 		{99E188A7-0304-4855-9D1C-923C6AE4FDCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{99E188A7-0304-4855-9D1C-923C6AE4FDCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{99E188A7-0304-4855-9D1C-923C6AE4FDCF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{123BED0F-305A-4E58-B02C-452AB555A593}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{123BED0F-305A-4E58-B02C-452AB555A593}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{123BED0F-305A-4E58-B02C-452AB555A593}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{123BED0F-305A-4E58-B02C-452AB555A593}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72C035D5-A87E-4247-98DE-FC834B901D76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72C035D5-A87E-4247-98DE-FC834B901D76}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72C035D5-A87E-4247-98DE-FC834B901D76}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72C035D5-A87E-4247-98DE-FC834B901D76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{693BC67C-2119-4AC1-AEF1-603357450AAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{693BC67C-2119-4AC1-AEF1-603357450AAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{693BC67C-2119-4AC1-AEF1-603357450AAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{693BC67C-2119-4AC1-AEF1-603357450AAD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2540A975-60CE-495B-8953-59E430954FDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2540A975-60CE-495B-8953-59E430954FDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2540A975-60CE-495B-8953-59E430954FDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2540A975-60CE-495B-8953-59E430954FDA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{25A3A654-0987-2E76-FCD3-A2A196DEF001}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{25A3A654-0987-2E76-FCD3-A2A196DEF001}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{25A3A654-0987-2E76-FCD3-A2A196DEF001}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{25A3A654-0987-2E76-FCD3-A2A196DEF001}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3CC29B44-2D31-D644-BBED-308F5AA987D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3CC29B44-2D31-D644-BBED-308F5AA987D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3CC29B44-2D31-D644-BBED-308F5AA987D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3CC29B44-2D31-D644-BBED-308F5AA987D1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

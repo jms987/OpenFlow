@@ -26,7 +26,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Data\Migrations\" />
+    <ProjectReference Include="..\OpenFlowWebServer.Services\OpenFlowWebServer.Services.csproj" />
   </ItemGroup>
+
+  <PropertyGroup>
+    <PreserveCompilationContext>true</PreserveCompilationContext>
+  </PropertyGroup>
 
 </Project>

@@ -1,0 +1,61 @@
+﻿@page "/dataset/{id}"
+@using OpenFlowWebServer.Repository
+@using OpenFlowWebServer.Domain.Entities
+@inject NavigationManager NavigationManager
+@inject IDatasetRepository DatasetRepository
+
+<h3>Szczegóły zbioru danych</h3>
+
+@if (dataset == null)
+{
+    <p>Ładowanie danych...</p>
+}
+else
+{
+    <div class="dataset-details">
+        <dl>
+            <dt>Nazwa:</dt>
+            <dd>@dataset.Name</dd>
+            <dt>Opis:</dt>
+            <dd>@dataset.Description</dd>
+            <dt>Data utworzenia:</dt>
+            <dd>@dataset.CreatedAt.ToString("yyyy-MM-dd HH:mm")</dd>
+            <dt>Plik konfiguracyjny:</dt>
+            <dd>
+                @if (dataset.ConfigFile != null)
+                {
+                    <a href="@dataset.ConfigFile.Url" target="_blank">@dataset.ConfigFile.Name</a>
+                }
+                else
+                {
+                    <span>Brak</span>
+                }
+            </dd>
+            <dt>Plik zbioru danych:</dt>
+            <dd>
+                @if (dataset.DatasetFile != null)
+                {
+                    <a href="@dataset.DatasetFile.Url" target="_blank">@dataset.DatasetFile.Name</a>
+                }
+                else
+                {
+                    <span>Brak</span>
+                }
+            </dd>
+        </dl>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public string id { get; set; }
+    private Dataset dataset;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Guid.TryParse(id, out var guid))
+        {
+            dataset = await DatasetRepository.GetByIdAsync(guid);
+        }
+    }
+}

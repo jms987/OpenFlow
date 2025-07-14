@@ -1,9 +1,7 @@
-﻿using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
-using OpenFlowWebServer.Data.Repositories;
-using File = OpenFlowWebServer.Data.Domain.File;
+﻿using OpenFlowWebServer.Repository;
+using File = OpenFlowWebServer.Domain.Entities.File;
 
-namespace OpenFlowWebServer.Repository
+namespace OpenFlowWebServer.Services
 {
     public interface IBrowserFileService
     {

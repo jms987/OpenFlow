@@ -1,14 +1,59 @@
-﻿@page "/Models/{id}"
-@using OpenFlowWebServer.Data.Domain
-@using OpenFlowWebServer.Data.Repositories
-
+﻿@page "/models/{id}"
+@using OpenFlowWebServer.Repository
+@using OpenFlowWebServer.Domain.Entities
 @inject IModelRepository ModelRepository
 
-<h3>SubModel</h3>
+<h3>Szczegóły modelu</h3>
 
+@if (model == null)
+{
+    <p>Ładowanie...</p>
+}
+else
+{
+    <div class="card mb-3">
+        <div class="card-body">
+            <h4 class="card-title">@model.ModelName</h4>
+            <p class="card-text"><strong>Opis:</strong> @model.ModelDescription</p>
+            <p class="card-text"><strong>Typ:</strong> @model.ModelType</p>
+            <p class="card-text"><strong>Id projektu:</strong> @model.ProjectId</p>
+        </div>
+    </div>
 
-
-
+    <h5>Hiperparametry</h5>
+    @if (model.Hyperparameters != null && model.Hyperparameters.Any())
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Nazwa</th>
+                    <th>Typ</th>
+                    <th>Opis</th>
+                    <th>Zakres dolny</th>
+                    <th>Zakres górny</th>
+                    <th>Krok</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var hp in model.Hyperparameters)
+                {
+                    <tr>
+                        <td>@hp.Name</td>
+                        <td>@hp.Type</td>
+                        <td>@hp.Description</td>
+                        <td>@hp.bottomRange</td>
+                        <td>@hp.upperRange</td>
+                        <td>@hp.step</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>Brak zdefiniowanych hiperparametrów.</p>
+    }
+}
 
 @code {
     [Parameter]
@@ -17,8 +62,9 @@
 
     protected override async Task OnInitializedAsync()
     {
-        model = await ModelRepository.GetByIdAsync(Guid.Parse(Id));
-         base.OnInitializedAsync();
+        if (Guid.TryParse(Id, out var guid))
+        {
+            model = await ModelRepository.GetByIdAsync(guid);
+        }
     }
-
 }

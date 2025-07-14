@@ -1,10 +1,10 @@
 ﻿@page "/dataset/add/{projectId}"
 @rendermode InteractiveServer
-@using OpenFlowWebServer.Data.Domain
-@using OpenFlowWebServer.Data.Repositories
 @using OpenFlowWebServer.Repository
 @using System.ComponentModel.DataAnnotations
 @using Humanizer
+@using OpenFlowWebServer.Domain.Entities
+@using OpenFlowWebServer.Services
 @inject IProjectRepository ProjectRepository
 @inject IDatasetRepository DatasetRepository
 @inject IFileRepository FileRepository
@@ -63,7 +63,7 @@
     }
 
 
-    private async Task HandleValidSubmit()
+    public async Task HandleValidSubmit()
     {
         var a = 0;
         var config = await BrowserFileService.HandleFileChange(ConfigFile, "config");
