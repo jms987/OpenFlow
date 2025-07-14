@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - production
+      - master
 
 jobs:
   build-and-test:
@@ -39,15 +40,15 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           dotnet-version: '8.0.x'
-
+        
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore ./OpenFlowWebServer/OpenFlowWebServer.sln
 
       - name: Build solution
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build ./OpenFlowWebServer/OpenFlowWebServer.sln --no-restore --configuration Release
 
       - name: Run Unit Tests
-        run: dotnet test OpenFlowWebServer.Domain.Tests.Unit.csproj --no-build --configuration Release
+        run: dotnet test ./OpenFlowWebServer.Domain.Tests.Unit/OpenFlowWebServer.Domain.Tests.Unit.csproj --no-build --configuration Release
 
       - name: Run Integration Tests
-        run: dotnet test OpenFlowWebServer.Repository.Tests.Integration.csproj --no-build --configuration Release
+        run: dotnet test ./OpenFlowWebServer.Repository.Tests.Integration/OpenFlowWebServer.Repository.Tests.Integration.csproj --no-build --configuration Release
