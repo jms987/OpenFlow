@@ -33,11 +33,11 @@
     <ProjectReference Include="..\OpenFlowWebServer\OpenFlowWebServer.csproj" />
   </ItemGroup>
 
-  <Target Name="CopyDepsJson" AfterTargets="Build">
+  <!--<Target Name="CopyDepsJson" AfterTargets="Build">
     <Copy
       SourceFiles="..\OpenFlowWebServer\bin\Debug\net8.0\OpenFlowWebServer.deps.json"
       DestinationFolder="$(OutDir)" />
-  </Target>
+  </Target>-->
 
 
 </Project>
