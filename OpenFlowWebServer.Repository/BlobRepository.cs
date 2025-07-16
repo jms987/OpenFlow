@@ -1,5 +1,4 @@
-﻿/*
-using Azure.Storage.Blobs;
+﻿using Azure.Storage.Blobs;
 using OpenFlowWebServer.Repository;
 using System;
 using System.Runtime.CompilerServices;
@@ -10,32 +9,14 @@ namespace OpenFlowWebServer.Repository
 {
     public interface IBlobRepository<T>
     {
-        /*public Task<Uri> AddBlobAsync(string blobContent, string containerName);
-        public Task<Uri> AddBlobAsync(byte[] blobContent, string containerName);#1#
-        public Task<BlobRepository.Blob> AddBlobAsync(T blobContent, string containerName);
+        public Task<Blob> AddBlobAsync(T blobContent, string containerName);
         public Task DeleteBlobAsync(string blobId, string containerName);
     }
 
     public class BlobRepository : IBlobRepository<byte[]>, IBlobRepository<string>, IBlobRepository<Stream>
     {
-        private string ConnectionString { get; set; }
         private BlobServiceClient BlobServiceClient { get; set; }
         private ILogger<BlobRepository> logger { get; set; }
-        
-        /*
-        public BlobRepository(string connectionString, ILogger logger)
-        {
-            ConnectionString = connectionString;
-            BlobServiceClient = new BlobServiceClient(connectionString);
-            this.logger = logger;
-        }
-
-        public BlobRepository(string connectionString)
-        {
-            ConnectionString = connectionString;
-            BlobServiceClient = new BlobServiceClient(connectionString);
-        }
-        #1#
 
         public BlobRepository(BlobServiceClient blobServiceClient, ILogger<BlobRepository> logger)
         {
@@ -109,56 +90,13 @@ namespace OpenFlowWebServer.Repository
             var blobClient = blobContainerClient.GetBlobClient(blobId);
             await blobClient.DeleteIfExistsAsync();
         }
+    }
 
-        public class Blob
-        {
-            public Guid BlobId { get; set; }
-            public string BlobName { get; set; }
-            public string BlobUrl { get; set; }
-            /*public string ContainerName { get; set; }#1#
-        }
+    public class Blob
+    {
+        public Guid BlobId { get; set; }
+        public string BlobName { get; set; }
+        public string BlobUrl { get; set; }
+        public string ContainerName { get; set; }
     }
 }
-
-/*public class BlobRepository : IBlobRepository
-{
-    private string ConnectionString { get; set; }
-    private BlobServiceClient BlobServiceClient { get; set; }
-
-    public BlobRepository(string connectionString)
-    {
-        ConnectionString = connectionString;
-        BlobServiceClient = new BlobServiceClient(connectionString);
-    }
-
-    public async Task<Uri> AddBlobAsync(object blobContent, string containerName)
-    {
-        if (blobContent is string stringContent)
-        {
-            return await AddBlobAsync(stringContent, containerName);
-        }
-        else if (blobContent is byte[] byteArrayContent)
-        {
-            return await AddBlobAsync(byteArrayContent, containerName);
-        }
-        else
-        {
-            throw new ArgumentException("Unsupported blob content type.");
-        }
-    }
-
-    private async Task<Uri> AddBlobAsync(string blobContent, string containerName)
-    {
-        // Implementation for string content
-        // ...
-        return new Uri("https://example.com");
-    }
-
-    private async Task<Uri> AddBlobAsync(byte[] blobContent, string containerName)
-    {
-        // Implementation for byte[] content
-        // ...
-        return new Uri("https://example.com");
-    }
-}#1#
-*/
