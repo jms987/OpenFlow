@@ -19,7 +19,6 @@ namespace OpenFlowWebServer.Repository.Tests.Integration
         public async Task GlobalSetup()
         {
 
-            
             _blobConnectionString = Environment.GetEnvironmentVariable("BLOB_CONNECTIONSTRING")
                                      ?? "UseDevelopmentStorage=true";
             _containerName = "test-container"+Guid.NewGuid();
@@ -109,8 +108,9 @@ namespace OpenFlowWebServer.Repository.Tests.Integration
         [OneTimeTearDown]
         public async Task OneTimeTearDown()
         {
-
             await _containerClient.DeleteIfExistsAsync();
+            if (_serviceProvider is IDisposable disposable)
+                disposable.Dispose();
         }
 
     }
