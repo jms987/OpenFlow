@@ -54,7 +54,7 @@ public class DatasetRepositoryMongoIntegrationTest
         // Arrange
         var repo = _serviceProvider.GetRequiredService<IDatasetRepository>();
         var a = repo.GetAllAsync().Result;
-        var dataset = new Dataset { Name = "Integration Dataset", Id = Guid.NewGuid() };
+        var dataset = new Dataset { Name = "Integration Dataset", Id = Guid.NewGuid(),ConfigFile = new File{Id = Guid.NewGuid()}};
         Assert.That(dataset.Id, Is.Not.EqualTo(Guid.Empty), "Dataset ID should not be empty");
         Assert.That(repo.GetAllAsync().Result.Count, Is.EqualTo(2));        // Act
         
@@ -67,6 +67,7 @@ public class DatasetRepositoryMongoIntegrationTest
         Assert.That(all, Has.Exactly(3).Items);
         Assert.That(byId.Name, Is.EqualTo("Integration Dataset"));
         Assert.That(byId.Id, Is.EqualTo(dataset.Id));
+        Assert.That(byId.ConfigFile.Id, Is.EqualTo(dataset.ConfigFile.Id), "ConfigFile ID should match");
     }
 
     [Test]

@@ -47,6 +47,7 @@ namespace OpenFlowWebServer.Repository
                 BlobClient = blobClient
             };
             blob.BlobUrl = blobClient.Uri.ToString();
+            blob.ContainerName = containerName.ToLower();
             return response;
         }
 
