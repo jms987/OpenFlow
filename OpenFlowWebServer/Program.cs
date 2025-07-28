@@ -46,7 +46,7 @@ public class Program
         builder.Services.AddScoped<IBlobRepository<Stream>, BlobRepository>();
 
         builder.Services.AddScoped<IBrowserFileService, BrowserFileService>();
-
+        builder.Services.AddScoped<IDatasetServices, DatasetServices>();
         builder.Services.AddIdentityMongoDbProvider<ApplicationUser>(
 
             mongoOptions =>

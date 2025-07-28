@@ -7,6 +7,7 @@ namespace OpenFlowWebServer.Services
     public interface IBrowserFileService
     {
         Task<File> HandleFileChange(InputFileChangeEventArgs e, string container);
+        Task<FileUpload> HandleFileChange2(InputFileChangeEventArgs e, string container);
     }
 
     public class BrowserFileService: IBrowserFileService
@@ -59,32 +60,34 @@ namespace OpenFlowWebServer.Services
 
         }
 
-        /*private async void HandleFileChange(InputFileChangeEventArgs e, string container)
+        public async Task<FileUpload> HandleFileChange2(InputFileChangeEventArgs e, string container)
         {
-            var InputFile = new File();
-            var ConfigFile = e.File;
-            /*InputFile.Id = Guid.NewGuid()#1#;
-            /*InputFile.Container = "Config";#1#
-            InputFile.FileName = e.File.Name;
-            using var stream = ConfigFile.OpenReadStream();
-            using var memoryStream = new MemoryStream();
-            await stream.CopyToAsync(memoryStream);
-            InputFile.Base64data = Convert.ToBase64String(memoryStream.ToArray());
-            InputFile.FileType = e.File.Name.Split('.').Last();
-            /*InputFile.Container = "Config";#1#
-            /*ConfigInputFile = InputFile;#1#
+            var upload = new FileUpload();
+            upload.File = new File()
+            {
+                //BlobGuid = Guid.NewGuid(),
+                Container = container,
+                Extension = e.File.Name.Split('.').Last(),
+                Name = e.File.Name,
+                Id = Guid.NewGuid()
+            };
 
-            blo
-
-        }*/
-
+            upload.DataStream = e.File.OpenReadStream(e.File.Size); 
+            return upload;
+        }
 
     }
+
+
+
+
 
     public class FileUpload
     {
-        public string FileName { get; set; }
-        public string FileType { get; set; }
-        public string Base64data { get; set; }
+        public File File { get; set; }
+        public Stream DataStream { get; set; }
     }
+
+
+
 }

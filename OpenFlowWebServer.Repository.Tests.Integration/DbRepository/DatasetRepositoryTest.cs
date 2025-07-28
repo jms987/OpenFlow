@@ -17,7 +17,10 @@ public class DatasetRepositoryMongoIntegrationTest
     private IServiceProvider _serviceProvider;
     private string _testDbName;
     private string _mongoConnectionString;
-
+    private Guid ExistentId = Guid.NewGuid();
+    private Guid NoConfigId = Guid.NewGuid();
+    private Guid NoDatasetId = Guid.NewGuid();
+    private File _tempFile;
     [OneTimeSetUp]
     public void GlobalSetup()
     {
@@ -35,28 +38,35 @@ public class DatasetRepositoryMongoIntegrationTest
         using var scope = _serviceProvider.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
         
-
+        _tempFile = new File
+        {
+            Id = Guid.NewGuid(),
+            Name = "ConfigFile",
+            Container = "Container",
+            Extension = "ext",
+            Url = "http://example.com/config.ext"
+        };
+        context.Files.Add(_tempFile);
         context.Datasets.AddRange(new[]
         {
-            new Dataset { Id = Guid.NewGuid(), Name = "Dataset 1", Description = "abcd",ConfigFile = new File{Id = Guid.NewGuid()},DatasetFile = new File(){Id = Guid.NewGuid()}},
-            new Dataset { Id = Guid.NewGuid(), Name = "Dataset 2", Description = "abcd",ConfigFile = new File{Id = Guid.NewGuid()},DatasetFile = new File(){Id = Guid.NewGuid()}}
+            new Dataset { Id =  ExistentId, Name = "Dataset 1", Description = "abcd",ConfigFile =    _tempFile,DatasetFile = _tempFile},
+            new Dataset { Id = Guid.NewGuid(), Name = "Dataset 2", Description = "abcd",ConfigFile = _tempFile,DatasetFile = _tempFile},
+            new Dataset { Id = NoConfigId, Name = "Dataset 3", Description = "abcd",DatasetFile = _tempFile},
+            new Dataset { Id = NoDatasetId, Name = "Dataset 4", Description = "abcd",ConfigFile = _tempFile}
         });
 
         context.SaveChanges();
 
     }
 
-   
-
     [Test]
     public async Task AddAndGet_ShouldPersistDataset()
     {
         // Arrange
         var repo = _serviceProvider.GetRequiredService<IDatasetRepository>();
-        var a = repo.GetAllAsync().Result;
-        var dataset = new Dataset { Name = "Integration Dataset", Id = Guid.NewGuid(),ConfigFile = new File{Id = Guid.NewGuid()}};
+        var dataset = new Dataset { Name = "Integration Dataset", Id = Guid.NewGuid(),ConfigFileId = _tempFile.Id,DatasetFileId = _tempFile.Id };
         Assert.That(dataset.Id, Is.Not.EqualTo(Guid.Empty), "Dataset ID should not be empty");
-        Assert.That(repo.GetAllAsync().Result.Count, Is.EqualTo(2));        // Act
+        Assert.That(repo.GetAllAsync().Result.Count, Is.EqualTo(4));        // Act
         
         await repo.AddAsync(dataset);
         await repo.SaveChangesAsync(); // Uwaga: await potrzebny, jeśli SaveChangesAsync zwraca Task
@@ -64,10 +74,38 @@ public class DatasetRepositoryMongoIntegrationTest
         var byId = await repo.GetByIdAsync(dataset.Id);
 
         // Assert
-        Assert.That(all, Has.Exactly(3).Items);
+        Assert.That(all, Has.Exactly(5).Items);
         Assert.That(byId.Name, Is.EqualTo("Integration Dataset"));
         Assert.That(byId.Id, Is.EqualTo(dataset.Id));
         Assert.That(byId.ConfigFile.Id, Is.EqualTo(dataset.ConfigFile.Id), "ConfigFile ID should match");
+    }
+
+    [Test]
+    public async Task Add_NoConfigFile_ShouldThrowError()
+    {
+        // Arrange
+        var repo = _serviceProvider.GetRequiredService<IDatasetRepository>();
+        var dataset = new Dataset { Name = "Integration Dataset", Id = Guid.NewGuid(), DatasetFileId = _tempFile.Id };
+
+       Assert.ThrowsAsync<ArgumentNullException>(async () =>
+        {
+            await repo.AddAsync(dataset);
+            await repo.SaveChangesAsync();
+        });
+
+    }
+
+    [Test]
+    public async Task Add_NoDatasetFile_ShouldThrowError()
+    {
+        // Arrange
+        var repo = _serviceProvider.GetRequiredService<IDatasetRepository>();
+        var dataset = new Dataset { Name = "Integration Dataset", Id = Guid.NewGuid(), ConfigFileId = _tempFile.Id };
+        Assert.ThrowsAsync<ArgumentNullException>(async () =>
+        {
+            await repo.AddAsync(dataset);
+            await repo.SaveChangesAsync();
+        });
     }
 
     [Test]
@@ -83,6 +121,41 @@ public class DatasetRepositoryMongoIntegrationTest
     }
 
     [Test]
+    public async Task GetById_ShouldReturnNull_WhenConfigFileNotFound()
+    {
+        // Arrange
+        var repo = _serviceProvider.GetRequiredService<IDatasetRepository>();
+
+        // Act & Assert
+        Assert.ThrowsAsync<InvalidOperationException>(async () => await repo.GetByIdAsync(NoConfigId));
+    }
+
+    [Test]
+    public async Task GetById_ShouldReturnNull_WhenDatasetFileNotFound()
+    {
+        // Arrange
+        var repo = _serviceProvider.GetRequiredService<IDatasetRepository>();
+
+        // Act & Assert
+        Assert.ThrowsAsync<InvalidOperationException>(async () => await repo.GetByIdAsync(NoDatasetId));
+    }
+
+
+    [Test]
+    public async Task GetById_ShouldReturnDataset()
+    {
+        // Arrange
+        var repo = _serviceProvider.GetRequiredService<IDatasetRepository>();
+
+        // Act
+        var result = await repo.GetByIdAsync(ExistentId);
+        // Assert
+        Assert.IsNotNull(result, "Expected dataset to be found");
+
+    }
+
+
+    [Test]
     public async Task GetAll_ShouldReturnAllDatasets()
     {
         // Arrange
@@ -90,7 +163,7 @@ public class DatasetRepositoryMongoIntegrationTest
         // Act
         var allDatasets = await repo.GetAllAsync();
         // Assert
-        Assert.That(allDatasets, Has.Exactly(3).Items, "Expected 3 datasets in the repository");
+        Assert.That(allDatasets, Has.Exactly(5).Items, "Expected 4 datasets in the repository");
     }
 
     [Test]
@@ -98,7 +171,7 @@ public class DatasetRepositoryMongoIntegrationTest
     {
         // Arrange
         var repo = _serviceProvider.GetRequiredService<IDatasetRepository>();
-        var dataset = new Dataset { Name = "Dataset to Delete", Id = Guid.NewGuid() };
+        var dataset = new Dataset { Name = "Dataset to Delete", Id = Guid.NewGuid(),ConfigFileId = _tempFile.Id,DatasetFileId = _tempFile.Id};
         await repo.AddAsync(dataset);
         await repo.SaveChangesAsync();
         var oldValue = repo.GetAllAsync().Result.Count;
@@ -118,20 +191,5 @@ public class DatasetRepositoryMongoIntegrationTest
         if (_serviceProvider is IDisposable disposable)
             disposable.Dispose();
     }
-
-    private class TestDataset
-    {
-        [BsonId]
-        public Guid Id { get; set; } = Guid.NewGuid();
-        public string Name { get; set; }
-        [BsonId]
-        public Guid ProjectId { get; set; }
-        public string? Description { get; set; }
-        [BsonId]
-        public Guid ConfigFileId { get; set; }
-        [BsonId]
-        public Guid DatasetFileId { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-    }
-
+    
 }

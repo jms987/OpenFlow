@@ -28,28 +28,28 @@ namespace OpenFlowWebServer.Repository.DbRepository
             _dbSet = context.Set<T>();
         }
 
-        public async Task<List<T>> GetAllAsync() =>
+        public virtual async Task<List<T>> GetAllAsync() =>
             await _dbSet.ToListAsync();
 
-        public async Task<T?> GetByIdAsync(object id) =>
+        public virtual async Task<T?> GetByIdAsync(object id) =>
             await _dbSet.FindAsync(id);
 
-        public async Task AddAsync(T entity) =>
+        public virtual async Task AddAsync(T entity) =>
             await _dbSet.AddAsync(entity);
 
-        public async Task UpdateAsync(T entity)
+        public virtual async Task UpdateAsync(T entity)
         {
             _dbSet.Update(entity);
             await Task.CompletedTask;
         }
 
-        public async Task DeleteAsync(T entity)
+        public virtual async Task DeleteAsync(T entity)
         {
             _dbSet.Remove(entity);
             await Task.CompletedTask;
         }
 
-        public async Task SaveChangesAsync() =>
+        public virtual async Task SaveChangesAsync() =>
             await _context.SaveChangesAsync();
     }
 

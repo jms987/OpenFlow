@@ -6,8 +6,8 @@
         public string Name { get; set; }
         public Guid ProjectId { get; set; }
         public string? Description { get; set; }
-        public Guid ConfigFileId { get; set; }
-        public Guid DatasetFileId { get; set; }
+        public Guid? ConfigFileId { get; set; }
+        public Guid? DatasetFileId { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         
         

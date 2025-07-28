@@ -10,6 +10,7 @@
 @inject IFileRepository FileRepository
 @inject IBlobRepository<byte[]> BlobRepository
 @inject IBrowserFileService BrowserFileService
+@inject IDatasetServices DatasetServices
 @inject NavigationManager NavigationManager
 <h3>AddDataset</h3>
 
@@ -48,8 +49,11 @@
     [Parameter]
     public string projectId { get; set; }
 
-    private InputFileChangeEventArgs? ConfigFile;
-    private InputFileChangeEventArgs? DatasetFile;
+//    private InputFileChangeEventArgs? ConfigFile;
+ //   private InputFileChangeEventArgs? DatasetFile;
+    private FileUpload ConfigFile;
+    private FileUpload DatasetFile;
+
     public InputDataset NewDataset = new InputDataset();
     /*private File DatasetInputFile;
     private File ConfigInputFile;*/
@@ -66,20 +70,23 @@
     public async Task HandleValidSubmit()
     {
         var a = 0;
-        var config = await BrowserFileService.HandleFileChange(ConfigFile, "config");
-        var datasetFile = await BrowserFileService.HandleFileChange(DatasetFile, "dataset");
+        //var config = await BrowserFileService.HandleFileChange(ConfigFile, "config");
+        //var datasetFile = await BrowserFileService.HandleFileChange(DatasetFile, "dataset");
 
         var dataset = new Dataset();
-        dataset.ConfigFileId = config.Id;
-        dataset.DatasetFileId = datasetFile.Id;
+    //    dataset.ConfigFileId = ConfigFile.File.Id;
+    //    dataset.DatasetFileId = DatasetFile.File.Id;
         dataset.Name = NewDataset.Name;
         dataset.Description = NewDataset.Description;
         dataset.ProjectId = Guid.Parse(projectId);
         dataset.CreatedAt = DateTime.UtcNow;
-        await DatasetRepository.AddAsync(dataset);
-        await FileRepository.AddAsync(config);
-        await FileRepository.AddAsync(datasetFile);
-        await DatasetRepository.SaveChangesAsync();
+        //await DatasetRepository.AddAsync(dataset);
+        //await FileRepository.AddAsync(ConfigFile.File);
+        //await FileRepository.AddAsync(DatasetFile.File)
+     //await DatasetRepository.SaveChangesAsync();
+
+        await DatasetServices.AddDatasetAsync(dataset, ConfigFile, DatasetFile);
+
         NavigationManager.NavigateTo($"/project/{projectId}");
 
     }
@@ -129,17 +136,17 @@
 
     private async void HandleFileChange(InputFileChangeEventArgs e, bool container)
     {
-        /*string containerName = container ? "Config" : "Dataset";*/
+        string containerName = container ? "Config" : "Dataset";
             if (container)
             {
-    ConfigFile = e;
+    ConfigFile = await BrowserFileService.HandleFileChange2(e, containerName);
             }
             else
             {
-    DatasetFile = e;
+    DatasetFile = await BrowserFileService.HandleFileChange2(e, containerName);
             }
-        /*BrowserFileService.HandleFileChange(e,containerName);
-            NavigationManager.NavigateTo($"/project/{projectId}");*/
+        BrowserFileService.HandleFileChange2(e,containerName);
+        //    NavigationManager.NavigateTo($"/project/{projectId}");*/
     }
 
 
