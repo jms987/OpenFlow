@@ -7,6 +7,8 @@
         public Guid ProjectId { get; set; }
         public string? ModelDescription { get; set; }
         public string? ModelType { get; set; }
+        public string SearchMethod { get; set; }
+        public int? Steps { get; set; }
         public virtual ICollection<Hyperparameter> Hyperparameters { get; set; } = new List<Hyperparameter>();
 
     }

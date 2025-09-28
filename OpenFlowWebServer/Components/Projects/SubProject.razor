@@ -2,64 +2,142 @@
 @rendermode InteractiveServer
 @using OpenFlowWebServer.Repository
 @using OpenFlowWebServer.Domain.Entities
-@inject IProjectRepository ProjectRepository  
+@using Microsoft.AspNetCore.Authorization
+@using OpenFlowWebServer.Services
+@inject IProjectRepository ProjectRepository
+@inject IDeployProjectServices DeployProjectServices
 @inject NavigationManager NavigationManager  
-<h3>Project</h3>  
-<NavLink class="btn btn-primary mb-3" href="/projects/add">Add New Project</NavLink>  
-<NavLink class="btn btn-primary mb-3" @onclick="NewModelPage">Add New Model</NavLink>  
-<NavLink class="btn btn-primary mb-3" @onclick="NewDatasetPage">Add New Dataset</NavLink>
+@attribute [Authorize]
+<h3>Projekt: @project?.ProjectName</h3>
 
-<h4>@project.Id</h4>  
-<h5>@project.ProjectName</h5>  
-<p>@project.ProjectDescription</p>  
-<p>@project.ChooseMethod</p>  
+<div class="mb-3">
+    <NavLink class="btn btn-primary" href="/projects/add">Dodaj nowy projekt</NavLink>
+    <NavLink class="btn btn-primary" @onclick="NewModelPage">Dodaj nowy model</NavLink>
+    <NavLink class="btn btn-primary" @onclick="NewDatasetPage">Dodaj nowy zbiór danych</NavLink>
+    <NavLink class="btn btn-primary" @onclick="SecurityPage">Zabezpieczenia</NavLink>
+    @if (project.IsDeployed)
+    {
+        <NavLink class="btn btn-primary" @onclick="ResetModel">Resetuj</NavLink>
+    }
+    else
+    {
+        <NavLink class="btn btn-primary" @onclick="DeployModel">Wdróż model</NavLink>
+    }
+</div>
 
-<h4>Models in this Project</h4>  
-@if (project.Models != null && project.Models.Any())  
-{  
-   <ul>  
-       @foreach (var model in project.Models)  
-       {  
-           <li @onclick="()=>SubModelPage(model.Id)">@model.ModelName - @model.ModelDescription</li>  
-       }  
-   </ul>  
-}  
-else  
-{  
-   <p>No models available for this project.</p>  
-}  
-<h4>Datasets in this Project</h4>
-@if (project.Datasets != null && project.Datasets.Any())
-{  
-    <ul>
-        @foreach (var dataset in project.Datasets)
-        {
-            <li @onclick="() => SubDatasetPage(dataset.Id)">@dataset.Name - @dataset.Description</li>
-        }  
-    </ul>  
-}  
-else  
-{  
-    <p>No models available for this project.</p>  
-}  
+<div class="card mb-3 p-3">
+    <h5>Dane projektu</h5>
+    <div class="mb-2">
+        <label class="form-label">ID projektu:</label>
+        <span>@project?.Id</span>
+    </div>
+    <div class="mb-2">
+        <label class="form-label">Nazwa projektu:</label>
+        <span>@project?.ProjectName</span>
+    </div>
+    <div class="mb-2">
+        <label class="form-label">Opis projektu:</label>
+        <span>@project?.ProjectDescription</span>
+    </div>
+    <div class="mb-2">
+        <label class="form-label">Wybrana metoda:</label>
+        <span>@project?.ChooseMethod</span>
+    </div>
 
+    <div class="mb-2">
+        <label for="methodSelect" class="form-label">Wybierz metodę:</label>
+        <select id="methodSelect" class="form-select" @onchange="OnMethodChanged" value="@selectedMethod">
+            @if (methodOptions != null)
+            {
+                @foreach (var option in methodOptions)
+                {
+                    <option value="@option.Value">@option.Label</option>
+                }
+            }
+            else
+            {
+                <option disabled>Ładowanie...</option>
+            }
+        </select>
+    </div>
+</div>
+
+<div class="card mb-3 p-3">
+    <h5>Modele w tym projekcie</h5>
+    @if (project?.Models != null && project.Models.Any())
+    {
+        <ul>
+            @foreach (var model in project.Models)
+            {
+                <li @onclick="()=>SubModelPage(model.Id)">
+                    <strong>Nazwa:</strong> @model.ModelName <br />
+                    <strong>Opis:</strong> @model.ModelDescription
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>Brak modeli w tym projekcie.</p>
+    }
+</div>
+
+<div class="card mb-3 p-3">
+    <h5>Zbiory danych w tym projekcie</h5>
+    @if (project?.Datasets != null && project.Datasets.Any())
+    {
+        <ul>
+            @foreach (var dataset in project.Datasets)
+            {
+                <li @onclick="() => SubDatasetPage(dataset.Id)">
+                    <strong>Nazwa:</strong> @dataset.Name <br />
+                    <strong>Opis:</strong> @dataset.Description
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>Brak zbiorów danych w tym projekcie.</p>
+    }
+</div>
 
 @code {  
-   [Parameter]  
-   public string id { get; set; }  
-   private Project project;  
+    [Parameter]  
+    public string id { get; set; }  
+    private Project project;  
+    private string selectedMethod;
+    private List<MethodOption> methodOptions;
 
-   protected override async Task OnInitializedAsync()  
-   {  
-       project = await ProjectRepository.GetByIdAsync(Guid.Parse(id));  
-       base.OnInitializedAsync();  
-   }  
+    protected override async Task OnInitializedAsync()
+    {
 
-   private void NewModelPage()  
-   {  
-       NavigationManager.NavigateTo($"/models/add/{id}");  
-   }
+        project = await ProjectRepository.GetByIdAsync(Guid.Parse(id));  
+        await LoadMethodOptionsAsync();
+        selectedMethod = methodOptions?.FirstOrDefault()?.Value;
+        StateHasChanged();
+        base.OnInitializedAsync();  
+    }
 
+    private async Task LoadMethodOptionsAsync()
+    {
+        methodOptions = new List<MethodOption>
+        {
+            new MethodOption { Value = "DF", Label = "Dataset First" },
+            new MethodOption { Value = "MF", Label = "Model First" },
+        };
+    }
+
+    private void NewModelPage()  
+    {  
+        NavigationManager.NavigateTo($"/models/add/{id}");  
+    }
+
+    private void SecurityPage()
+    {  
+        NavigationManager.NavigateTo($"/security/{id}");
+    }
+    
     private void NewDatasetPage()  
     {  
         NavigationManager.NavigateTo($"/dataset/add/{id}");  
@@ -73,6 +151,30 @@ else
     private void SubDatasetPage(Guid datasetGuid)
     {
         NavigationManager.NavigateTo($"dataset/{datasetGuid}");
+    }
+
+    private async Task DeployModel()
+    {
+       await DeployProjectServices.DeployProjectAsync(Guid.Parse(id));
+    }
+
+    private void ResetModel()
+    {
+        DeployProjectServices.ClearProjectAsync(Guid.Parse(id));
+    }
+
+    private class MethodOption
+    {
+        public string Value { get; set; }
+        public string Label { get; set; }
+    }
+
+    private async Task OnMethodChanged(ChangeEventArgs e)
+    {
+        selectedMethod = e.Value.ToString();
+        project.ChooseMethod = selectedMethod;
+        await ProjectRepository.UpdateAsync(project);
+        await ProjectRepository.SaveChangesAsync();
     }
 
 }

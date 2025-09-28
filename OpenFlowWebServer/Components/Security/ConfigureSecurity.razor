@@ -1,0 +1,74 @@
+﻿@page "/security/{ProjectId}"
+@using OpenFlowWebServer.Domain.Entities
+@using OpenFlowWebServer.Enums
+@rendermode InteractiveServer
+@inject NavigationManager NavigationManager
+@inject ILogger<ConfigureSecurity> Logger
+@inject IConfiguration Configuration
+@inject IProjectRepository ProjectRepository
+
+@foreach (var method in Enum.GetNames<SecurityMethods>())
+{
+    <label class="darker-border-checkbox form-check-label me-3">
+        <input type="checkbox" class="darker-border-checkbox form-check-input" @onchange="(e) => OnSecurityMethodChanged(e, method)" checked="@IsMethodEnabled(method)" />
+        @method.ToString()
+    @if (IsMethodEnabled(method))
+    {
+        <label>Pole do wpisywania</label>
+    }
+    </label>
+
+}
+
+<button @onclick="Submit">Submit</button>
+
+@code
+{
+    [Parameter]
+    public string ProjectId
+    {
+        get
+        {
+            return projectGuid.ToString();
+        }
+        set
+        {
+            projectGuid = Guid.TryParse(value, out var guid) ? guid : Guid.Empty;
+        }
+    }
+    private Guid projectGuid;
+    private Project? project;
+    private Dictionary<SecurityMethods, bool> IsChecked;
+    protected override async Task OnInitializedAsync()
+    {
+        IsChecked = new Dictionary<SecurityMethods, bool>();
+        project = await ProjectRepository.GetByIdAsync(projectGuid);
+
+        foreach (var security in project.Securities)
+        {
+            IsChecked[security.Method] = true;
+        }
+        await base.OnInitializedAsync();
+    }
+
+    private void OnSecurityMethodChanged(ChangeEventArgs e, string method)
+    {
+        IsChecked[Enum.Parse<SecurityMethods>(method)] = !IsChecked[Enum.Parse<SecurityMethods>(method)];
+    }
+
+    private bool IsMethodEnabled(string method)
+    {
+        if (!IsChecked.ContainsKey(Enum.Parse<SecurityMethods>(method)))
+        {
+            IsChecked[Enum.Parse<SecurityMethods>(method)] = false;
+        }
+        return IsChecked[Enum.Parse<SecurityMethods>(method)];
+    }
+
+    private async Task Submit()
+    {
+        var a = 0;
+
+    }
+
+}

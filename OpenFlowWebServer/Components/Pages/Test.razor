@@ -1,0 +1,26 @@
+﻿@page "/test"
+@using OpenFlowWebServer.Repository
+@using Azure.Storage.Queues.Models
+@inject IQueueRepository QueueRepository
+<h3>test</h3>
+
+@code {
+    protected override void OnInitialized()
+    {
+        QueueRepository.EnqueueAsync(new MyQueueItem(), "test");
+        base.OnInitialized();
+    }
+
+    public class MyQueueItem
+    {
+        public string Name { get; set; } 
+        public string Description { get; set; } 
+
+        public MyQueueItem()
+        {
+            Name = "test";
+            Description = "test description";
+        }
+    }
+
+}

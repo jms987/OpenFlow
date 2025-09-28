@@ -20,6 +20,7 @@ namespace OpenFlowWebServer.Domain
         public DbSet<Model> Models { get; set; }
         public DbSet<Project> Projects { get; set; }
         public DbSet<File> Files { get; set; }
+        public DbSet<Security> Securities { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

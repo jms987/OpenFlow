@@ -139,13 +139,13 @@
         string containerName = container ? "Config" : "Dataset";
             if (container)
             {
-    ConfigFile = await BrowserFileService.HandleFileChange2(e, containerName);
+    ConfigFile = await BrowserFileService.HandleFileChange2(e.File, containerName);
             }
             else
             {
-    DatasetFile = await BrowserFileService.HandleFileChange2(e, containerName);
+    DatasetFile = await BrowserFileService.HandleFileChange2(e.File, containerName);
             }
-        BrowserFileService.HandleFileChange2(e,containerName);
+        BrowserFileService.HandleFileChange2(e.File,containerName);
         //    NavigationManager.NavigateTo($"/project/{projectId}");*/
     }
 

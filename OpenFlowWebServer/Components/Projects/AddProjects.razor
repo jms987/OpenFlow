@@ -1,10 +1,12 @@
 ﻿@page "/projects/add"  
 @rendermode InteractiveServer
 @using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Authorization
 @using OpenFlowWebServer.Domain.Entities
 @using OpenFlowWebServer.Repository
 @inject IProjectRepository ProjectRepository  
 @inject NavigationManager NavigationManager  
+@attribute [Authorize]
 <h3>Add New Project</h3>  
 
 <button class="btn btn-primary" @onclick="AddProject">Add Project</button>  

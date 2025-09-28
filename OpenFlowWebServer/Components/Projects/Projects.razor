@@ -2,9 +2,13 @@
 @rendermode InteractiveServer
 @using OpenFlowWebServer.Repository
 @using OpenFlowWebServer.Domain.Entities
+@using Microsoft.AspNetCore.Authorization
 @inject IProjectRepository ProjectRepository
+@inject IQueueRepository QueueRepository
 @inject NavigationManager NavigationManager
+@attribute [Authorize(Policy = "CookieOrJwt")]
 <h3>Projects</h3>
+
 
 <NavLink class="btn btn-primary mb-3" href="/projects/add">Add New Project</NavLink>
 
@@ -20,32 +24,73 @@ else
 {
     <table class="table table-striped">
         <thead>
-        <tr>
-            <th>Project Name</th>
-            <th>Description</th>
-            <th>Method</th>
-        </tr>
+            <tr>
+                <th>Project Name</th>
+                <th>Description</th>
+                <th>Method</th>
+                <th>Deploy status</th>
+                <th>Progress</th>
+
+            </tr>
         </thead>
         <tbody>
-        @foreach (var project in projects)
-        {
-            <tr @onclick="() =>NavigateToProject(project.Id) ">
-                <td>@project.ProjectName</td>
-                <td>@project.ProjectDescription</td>
-                <td>@project.ChooseMethod</td>
-            </tr>
-        }
+            @foreach (var project in projects)
+            {
+                <tr @onclick="() =>NavigateToProject(project.Id) ">
+                    <td>@project.ProjectName</td>
+                    <td>@project.ProjectDescription</td>
+                    <td>@project.ChooseMethod</td>
+                    
+                        @if (project.IsDeployed)
+                        {
+                        <td>
+                            <span class="badge bg-success">Deployed</span>
+                        </td>
+                            <td>
+                                @if (projectStatuses.ContainsKey(project.Id))
+                                {
+                                    <span class="badge bg-success">@($"{projectStatuses[project.Id]:P0}")</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Ładowanie...</span>
+                                }
+                            </td>
+                        }
+                        else
+                        {
+                        <td>
+                            <span class="badge bg-secondary">Not Deployed</span>
+                        </td>
+
+                        }
+
+                </tr>
+            }
         </tbody>
     </table>
 }
 
 @code {
     private List<Project> projects = new List<Project>();
+    private Dictionary<Guid, float> projectStatuses = new Dictionary<Guid, float>();
     protected override async Task OnInitializedAsync()
     {
         projects = await ProjectRepository.GetAllAsync();
+        if (projects == null)
+        {
+            projects = new List<Project>();
+        }
+        else if (projects.Any(p => p.IsDeployed))
+        {
+            foreach (var project in projects.Where(p => p.IsDeployed))
+            {
+                projectStatuses[project.Id] = (project.InitialConfigurations- await QueueRepository.GetCountAsync(project.Id)) / project.InitialConfigurations; // Initialize with 0% progress
+            }
+        }
         base.OnInitializedAsync();
     }
+
     /*private void NavigateToAddProject()
     {
         NavigationManager.NavigateTo("/projects/add");

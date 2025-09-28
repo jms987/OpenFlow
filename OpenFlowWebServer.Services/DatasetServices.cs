@@ -32,10 +32,25 @@ namespace OpenFlowWebServer.Services
 
         public async Task AddDatasetAsync(Dataset dataset, FileUpload ConfigFile, FileUpload DatasetFile)
         {
-            if (dataset == null)
+            var input = new List<object>{ dataset, ConfigFile, DatasetFile };
+            if (input.Any(i => i == null))
             {
-                throw new ArgumentNullException(nameof(dataset), "Dataset cannot be null");
+                var nullItem = input.First(i => i == null);
+                throw new ArgumentNullException(nameof(nullItem), $"{nameof(nullItem)} cannot be null");
             }
+            else
+            {
+                var innerInput = new List<object>{
+                    ConfigFile.DataStream,ConfigFile.File,
+                    DatasetFile.DataStream,DatasetFile.File
+                };
+                if (innerInput.Any(i => i == null))
+                {
+                    var innerNullItem = innerInput.First(i => i == null);
+                    throw new ArgumentNullException(nameof(innerNullItem), $"{nameof(innerNullItem)} cannot be null");
+                }
+            }
+
             dataset.ConfigFileId = ConfigFile.File.Id;
             dataset.DatasetFileId = DatasetFile.File.Id;
             var configBlob  = await _blobRepository.AddBlobAsync(ConfigFile.DataStream, _config["Databases:BlobStorage:ConfigContainerName"]);

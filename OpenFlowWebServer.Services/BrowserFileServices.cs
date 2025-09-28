@@ -7,14 +7,12 @@ namespace OpenFlowWebServer.Services
     public interface IBrowserFileService
     {
         Task<File> HandleFileChange(InputFileChangeEventArgs e, string container);
-        Task<FileUpload> HandleFileChange2(InputFileChangeEventArgs e, string container);
+        Task<FileUpload> HandleFileChange2(IBrowserFile file, string container);
     }
 
     public class BrowserFileService: IBrowserFileService
     {
         private IBlobRepository<Stream> BlobRepository { get; set; }
-        private IFileRepository FileRepository { get; set; }
-        private IBrowserFile? InputFile;
 
         public BrowserFileService(IBlobRepository<Stream> blobRepository)
         {
@@ -60,19 +58,19 @@ namespace OpenFlowWebServer.Services
 
         }
 
-        public async Task<FileUpload> HandleFileChange2(InputFileChangeEventArgs e, string container)
+        public async Task<FileUpload> HandleFileChange2(IBrowserFile file, string container)
         {
             var upload = new FileUpload();
             upload.File = new File()
             {
                 //BlobGuid = Guid.NewGuid(),
                 Container = container,
-                Extension = e.File.Name.Split('.').Last(),
-                Name = e.File.Name,
+                Extension = file.Name.Split('.').Last(),
+                Name = file.Name,
                 Id = Guid.NewGuid()
             };
 
-            upload.DataStream = e.File.OpenReadStream(e.File.Size); 
+            upload.DataStream = file.OpenReadStream(file.Size); 
             return upload;
         }
 
