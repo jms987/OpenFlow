@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Builder;
 
 namespace OpenFlowWebServer.Tests.E2E
 {
+    // This will be integreted in future 
+    /*
     internal class TestAppHost : IDisposable
     {
         private WebApplication _app;
@@ -120,15 +122,13 @@ namespace OpenFlowWebServer.Tests.E2E
                 {
                     await _hostTask;
                 }
-                catch (OperationCanceledException) { /* expected */ }
+                catch (OperationCanceledException) {  expected  }
 
-                // give the host a chance to stop gracefully:
-                //await _host.StopAsync();
             }
             _hostTask.Dispose();
             _host?.Dispose();
         }
     }
-
-
+            
+        */
 }
