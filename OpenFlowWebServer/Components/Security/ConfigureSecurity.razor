@@ -1,11 +1,14 @@
 ﻿@page "/security/{ProjectId}"
 @using OpenFlowWebServer.Domain.Entities
 @using OpenFlowWebServer.Enums
+@using OpenFlowWebServer.Services.SecurityMethodsServices
 @rendermode InteractiveServer
 @inject NavigationManager NavigationManager
 @inject ILogger<ConfigureSecurity> Logger
 @inject IConfiguration Configuration
 @inject IProjectRepository ProjectRepository
+@inject IEnumerable<ISecurityMethodService> securityServices;
+
 
 @foreach (var method in Enum.GetNames<SecurityMethods>())
 {
@@ -14,7 +17,10 @@
         @method.ToString()
     @if (IsMethodEnabled(method))
     {
-        <label>Pole do wpisywania</label>
+        @for(int i = 0; i < securityServices.First(m => m.SecurityMethodType == method).FieldsNumber; i++)
+        {
+            <label>Pole do wpisywania</label>
+        }
     }
     </label>
 
@@ -36,6 +42,8 @@
             projectGuid = Guid.TryParse(value, out var guid) ? guid : Guid.Empty;
         }
     }
+
+    private readonly IEnumerable<ISecurityMethodService> _securityServices;
     private Guid projectGuid;
     private Project? project;
     private Dictionary<SecurityMethods, bool> IsChecked;

@@ -10,16 +10,17 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using OpenFlowWebServer.Components;
 using OpenFlowWebServer.Components.Account;
 using OpenFlowWebServer.Domain;
 using OpenFlowWebServer.Repository;
+using OpenFlowWebServer.Repository.DbRepository;
 using OpenFlowWebServer.Services;
 using Swashbuckle.AspNetCore.Swagger;
 using System.IdentityModel.Tokens.Jwt;
-using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using OpenFlowWebServer.Repository.DbRepository;
+using OpenFlowWebServer.Services.SecurityMethodsServices;
 
 public class Program
 {
@@ -72,6 +73,12 @@ public class Program
         builder.Services.AddScoped<IDeployProjectServices, DeployProjectServices>();
         builder.Services.AddScoped<IJWTService, JWTService>();
         builder.Services.AddScoped<ILoginServices, LoginServices>();
+
+
+        //security services
+        builder.Services.AddScoped<ISecurityMethodService, PasswordSecurityMethodService>();
+        builder.Services.AddScoped<ISecurityMethodService, SecretSecurityMethodService>();
+
 
         builder.Services.AddIdentityMongoDbProvider<ApplicationUser>(mongoOptions =>
         {
